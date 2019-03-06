@@ -1,0 +1,2 @@
+# threejs-demo
+利用threejs编写一个3d温室大棚demo,在支持webgl浏览器打开index.html既可以看到效果

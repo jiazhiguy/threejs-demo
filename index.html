@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - geometries</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link  href="css/pure-release-0.6.1/pure.css" rel="stylesheet">
+		<link  href="js/utils/viewerjs/viewer.css" rel="stylesheet">
+		<script src="js/utils/viewerjs/viewer.js"></script>
+		<style>
+			body {
+				background-color: #fff;
+				color: #111;
+				margin: 0px;
+				overflow: hidden;
+				font-family: Monospace;
+				font-size: 13px;
+/*				color: #eee;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+
+				background-color: #000;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;*/
+			}
+
+	/*		#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+			}*/
+
+			a {
+				color: #0080ff;
+			}
+	       #video{
+	       		/*display:none;*/
+	            position: fixed;
+	            left:0;
+	            bottom:0;
+	        }
+	        #camera{
+	            position: fixed;
+	            left:100;
+	            bottom:100;
+	        }
+	       .imageViewer{
+	       		width: 300px;
+	       		height: :300px;
+	       		transparent:true
+	       }
+	       #myimage{
+	       		position: fixed;
+	            left:0;
+	            bottom:0;
+	       }
+	       .allcanvas{
+	       		height: 500px
+	       }
+		   .tooltip{
+				position:absolute;
+				padding:5px;
+				width:120;
+				height:auto;
+				font-family:simsun;
+				font-size:14px;
+				color:black;
+				background-color: rgb(255,255,255);
+				border-width: 2px solid rgb(255,255,255);
+				border-radius:5px;
+			}
+		   .canvas{
+		   		position: relative;
+		   		height: 400px;
+		   		margin:5px;
+		   		/*padding: 5px;*/
+		   		background-color: #5b612530;
+		   		/*border:1px dashed #000*/
+		   		border:4px solid #eee;
+		   		text-align:center;
+		   		/*z-index: 200;*/
+
+		   }
+		   .canvas:after{
+		   		content: attr(data-corner);
+		   		position: absolute; top: 0; right: 0;
+		   		width: 4rem;
+		   		padding: 0 1rem;
+		   		text-align: right;
+		   		color: rgba(255,255,255,.9);
+		   		/*background: red;*/
+		   		background: linear-gradient(45deg,transparent 0% , transparent 30%,  rgba(22,78,137,1) 30%,  rgba(22,78,137,1) 100%)
+
+		   }	
+		   .canvas canvas{
+
+		   		z-index: 9999;
+		   	/*	position: absolute;
+		   		bottom: 0px;
+		   		left: -1px;*/
+		   		width: 100%;
+		   		height:100%;
+		   }
+		/*	#canvas3d{
+				width: 400px;
+				height: 400px;
+				background-color: #4758573b;
+				border:1px solid #2988b3b3
+
+			}*/
+		   .shotimage{
+		   		width: 500px;
+		   		height: 400px;
+				position: absolute; 
+				margin-left: -250px;
+				margin-top:-200px;  
+				top: 50%;   
+				left: 50%; 
+				/*display: block;*/
+		   		border:5px solid #eee;
+
+		   		/*padding: 2px;*/
+		   		z-index: 1000;
+		   		/*padding-top:10px;
+		   		padding-bottom:10px;*/
+
+		   		text-align:center;
+				background-color: #36a2393b;
+				/*background-color: transparent;*/
+		   }
+		   .shotimage img{
+		   		/*width: 400px;
+		   		height:400px;*/
+		   		width: 100%;
+		   		height:100%;
+		   		/*margin: ;*/
+		   		/*border:5px solid #3d63b39c;*/
+		   }
+		   .shotclose{
+	   		   	position: absolute;
+			    right: -25px;
+			    top: -25px;
+			    width: 50px;
+			    height: 50px;
+			    /*background: silver;*/
+			    background:#3d63b39c;
+			    border-radius: 25px;
+			    box-shadow: 2px 2px 5px 0px black;
+			    cursor: pointer;
+		   		/*background: rgb(28, 184, 65);*/
+		   }
+			.shotclose:hover {
+			    background: red;
+			}
+			.shotclose:before {
+			    position: absolute;
+			    content: '';
+			    width: 30px;
+			    height: 10px;
+			    background: white;
+			    transform: rotate(45deg);
+			    top: 20px;
+			    left: 10px;
+			}
+			.shotclose:after{
+			    content: '';
+			    position: absolute;
+			    width: 30px;
+			    height: 10px;
+			    background: white;
+			    transform: rotate(-45deg);
+			    top: 20px;
+			    left: 10px;
+			}
+			.tips{
+				position: absolute;
+				z-index: 1000;
+				/*top:20px;*/
+				/*width:50%;*/
+			}
+			.tips a{
+				font-size: 1em;
+				margin: 5px;
+			}
+			.tips a:hover{
+				border: 2px solid #2988b3b3;
+				display: block;
+				/*background:white;*/
+				background: linear-gradient(45deg, rgb(31,89,146),rgb(35,175,230),rgb(29,136,203));
+			}
+			.canvas .chart{
+				position: absolute;
+				width: 100%;
+				left:0px;
+				bottom: 0px;
+				
+			}
+	/*		#layout {
+			    position: relative;
+			    left: 0;
+			    padding-left: 0;
+			}*/
+			#menu{
+				/*display: inline-block;*/
+				width: 150px;
+				position: absolute;
+				top:0px;
+				left:0px;
+				bottom: 0px;
+				z-index: 2000;
+				background: #191818;
+				overflow-y: auto;
+				/*display: inline;*/
+				/*float: left;*/
+			}
+			#main{
+				text-align: center;
+				margin-left: 151px;
+				border: 1px solid #2988b3b3;
+		/*		position: absolute;
+				top:0px;
+				bottom: 0px;
+				left: 150px;
+				display: inline;*/
+				/*width: 80%;*/
+				/*display: inline;*/
+				/*float:left;*/
+				/*margin: 0 auto;*/
+			}
+			.content {
+				display: block;
+				width: 100%;
+			    /*margin: 0,auto;*/
+			   /* padding: 0 2em;*/
+			    /*max-width: 800px;*/
+			   /* margin-bottom: 50px;*/
+			    line-height: 1.6em;
+			}
+			.main-menu{
+
+				/*width: 100px;*/
+				width: 100%;
+				display: inline-block;
+				/*background-color: #5b612530;*/
+				/*border-bottom:5px solid #eee;*/
+			}
+			.main-menu li{
+				border-left: 3px solid white;
+				border-bottom: 1px dashed white;
+				margin: 2px;
+				text-align:center;
+			}
+			#barchart_table table{
+				width: 100%;
+				text-align:center;
+				position: absolute;
+				bottom: 5%;
+				/*width:100%;*/
+			}
+			#barchart_table table thead{
+				text-align: center;
+			}
+			#barchart_table tr:hover{
+				color: skyblue;
+			}
+			#food_chart{
+				width: 100%;
+
+			}
+
+			#food_chart table{
+				position: relative;
+				width: 100%;
+			}
+			#food_chart table tbody {
+				display:block;
+				height:400px;
+				width: 100%;
+				overflow-y:scroll;
+			}
+			#food_chart table thead{
+				display:block;
+				
+				text-align: center;
+			}
+
+
+			.suit{
+				position: relative
+			}
+
+			.modal{
+				position: absolute;
+				height: 200px; width: 400px; 
+				top: 0px; 
+				left: 0px; 
+				background: rgba(0,0,0,.5);
+				color: white; 
+				text-align: center
+			}
+
+
+			.panel{
+				height: 12rem; width: 24rem;
+				border: 1px solid rgba(22,78,137,1);
+				background: rgba(13,35,61,1);
+				position: relative;
+			}
+			.panel::after{
+				content: attr(data-corner);
+				display: block; position: absolute; top: 0; right: 0; 
+				width: 5rem; padding: 0 1rem; overflow: hidden; text-align: right; color: rgba(255,255,255,.9);
+				background: linear-gradient(45deg,transparent 0% , transparent 30%,  rgba(22,78,137,1) 30%,  rgba(22,78,137,1) 100%)
+			}
+		</style>
+	</head>
+	<body>
+		<div id="layout">
+			<div id="menu">
+				<div class="pure-menu main-menu">
+					<ul class="pure-menu-list">
+						<li class="pure-menu-item"><a href="#" class="pure-menu-link">1</a></li>
+						<li class="pure-menu-item"><a href="#" class="pure-menu-link">2</a></li>
+						<li class="pure-menu-item"><a href="#" class="pure-menu-link">3</a></li>
+						<li class="pure-menu-item"><a href="#" class="pure-menu-link">4</a></li>
+						<li class="pure-menu-item"><a href="#" class="pure-menu-link">5</a></li>
+					</ul>
+				</div>
+			</div>
+			<div id="main">
+				<div class="pure-g allcanvas content">
+					<div class="pure-u-1-5 canvas" id="canvas3d"></div>
+					<div class="pure-u-1-4 canvas" data-corner='当前'>
+						<div class="pure-u-1"><h2>数据图表</h2></div>
+						<div class="pure-g tips">
+							<a class="pure-button pure-u-1-5">当前</a>
+							<a class="pure-button pure-u-1-5">昨天</a>
+							<a class="pure-button pure-u-1-5">本周</a>
+							<a class="pure-button pure-u-1-5">本月</a>
+						</div>
+						<div  class="pure-u-1 chart" id="barchart"></div>
+					</div>
+					<div class="pure-u-1-4 canvas" id="barchart_table"></div>
+					<div class="pure-u-1-5 canvas" ></div>
+				</div>
+			</div>
+		</div>
+		<!-- <div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - geometries</div> -->
+		<video id="video"  autoplay loop muted controls width="1" height="1">
+			<source src="assets/movies/Big_Buck_Bunny_small.ogv">
+			<source src="assets/movies/Big_Buck_Bunny_small.mp4">
+		</video>
+		<video id="camera" autoplay playsinline width="1" height="1">
+		</video>
+		<!-- <svg></svg> -->
+		<div id="mycanvas" hidden="hidden" style="width: 600px;height:400px;"></div>
+		<img id='myimage' hidden="hidden" width=300 height=300>
+		<!-- <div id="imageViewer" class="imageViewer"><ul id="images" class="imageViewer"></ul></div> -->
+		<script src="js/build/three.min.js"></script>
+		<script src="js/WebGL.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+		<script src="js/libs/ThreeBSP.js"></script>
+		<script src="js/libs/dat.gui.min.js"></script>
+		<script src="js/controls/DragControls.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
+		<script src="js/utils/myModel.js"></script>
+		<script src="js/utils/echarts.min.js"></script>
+		<script src="js/utils/d3/d3.js"></script>
+		<script src="js/utils/d3/myD3Chart.js"></script>
+		<script src="js/utils/d3/d3simplechart.js"></script>
+		<script src="js/utils/canvg/canvg.js"></script>
+		<script src="js/utils/gifjs/gif.js"></script>
+		<script src="js/utils/gifshot/gifshot.js"></script>
+		<script src="js/utils/html2canvas/html2canvas.js""></script>
+		<script type="x-shader/x-vertex" id="vertexShader">
+			varying vec3 vWorldPosition;
+			void main() {
+				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+				vWorldPosition = worldPosition.xyz;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentShader">
+			uniform vec3 topColor;
+			uniform vec3 bottomColor;
+			uniform float offset;
+			uniform float exponent;
+			varying vec3 vWorldPosition;
+			void main() {
+
+				float h = normalize( vWorldPosition + offset ).y;
+				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+
+			}
+		</script>
+
+		<script>
+			if ( WEBGL.isWebGLAvailable() === false ) {
+
+				document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+
+			}
+			//setup control gui
+			var camera, scene, renderer, stats,sceneOrtho,cameraOrtho;
+			// var rendererMinWidth=window.innerWidth/2;
+			// var rendereMinHeight=window.innerHeight/2;
+			var rendererMinWidth=document.getElementById("canvas3d").offsetWidth>400?400:document.getElementById("canvas3d").offsetWidth;
+			var rendereMinHeight=document.getElementById("canvas3d").offsetHeight>400?400:document.getElementById("canvas3d").offsetHeight;
+			var rendererMaxWidth=window.innerWidth
+			var rendereMaxHeight=window.innerHeight
+			var rendererWidth=rendererMinWidth;
+			var rendererHeight=rendereMinHeight;
+			var rendererFullScreen=false;
+			var autoRotate=true; 
+			var dragable=false;
+            var autoRotateSpeed=1;
+			var material=new THREE.MeshBasicMaterial({color: 0x999999,transparent:true,opacity:0.35,wireframe:true});
+       	        material.needsUpdate=true;
+			var gif = new GIF({
+				workers: 2,
+				quality: 10,
+				// width: 300,
+				// height:300,
+				workerScript:'js/utils/gifjs/gif.worker.js',
+		    });
+			var controls = new function () {
+				//material
+	  			this.rotationSpeed=0.02;
+	            this.opacity=material.opacity;//透明度
+	            this.transparent=material.transparent;
+	            this.visible=material.visible;     
+	            this.wireframe=material.wireframe;
+	            this.flatShading =material.flatShading ;
+	            this.wireframeLineWidth=material.wireframeLineWidth;
+	            this.color=material.color.getStyle();
+	            this.chartTransparent=false;
+	            this.chartcolor='#fff'
+	            this.自动旋=true;
+	            this.自选转速度=1;
+	            // this.可拖拽=false;
+	            //fan
+				this.isTurnLeft=false;
+				this.waterDrop=false;
+				this.风机启 = function() {
+					this.isTurnLeft=true;
+				}
+				this.风机关=function(){
+					this.isTurnLeft=false;
+				}
+				this.湿帘启 = function() {
+					this.waterDrop=true;
+				}
+				this.湿帘关=function(){
+					this.waterDrop=false;
+				}
+				this.显示大小=250;
+				this.dataGuiSize=250;
+				this.sceneOrthUpdate=true;
+				this.gif_start=false;
+				this.gif_end=false;
+				this.gif_flag=false;
+				// this.canvasBuffer=[];
+				this.来源='网络摄像头';
+				this.宽度=200;
+				this.高度=200;
+				this.帧数=10;
+				this.帧间隔=1;
+				this.文字='';
+				this.质量=10;
+				this.转换数=2;
+				this.shotDiv=function(imagedata){
+					var id="shotdiv";
+						var div=d3.select("#"+id)
+						if(div){
+							div.remove()
+						}
+						var div=d3.select("#"+id).data([imagedata]).enter().append("div")
+								.attr("id",id)
+								.attr("class","shotimage")
+								.on("dblclick",zoom)
+						// console.log("div",div)
+						var img=div.selectAll("img").data([imagedata]).enter().append("img")
+									.attr("src",function(d){return d})
+						var closeButton=div.append("button")
+										   .attr("class","shotclose pure-button")
+										   // .text("关闭")
+										   .on("click",close);
+						function close(){
+							div.remove();
+						}
+						function zoom(){
+
+
+						}
+				};
+				this.截屏1=function(){
+					renderer.render(scene,camera);
+					renderer.render(sceneOrtho,cameraOrtho);
+					let image=new Image();
+					let that=this;
+					shot(renderer,function(imgData){
+						that.shotDiv(imgData);
+					})
+					
+				}
+				this.截屏2=function(){
+					// renderer.render(scene,camera);
+					// renderer.render(sceneOrtho,cameraOrtho);
+					let that=this;
+					html2canvas(document.body).then(function(canvas) {
+						var imagedata=canvas.toDataURL();
+						that.shotDiv(imagedata);
+						
+					});
+
+				}
+				this.redraw=function(){
+					this.sceneOrthUpdate=false;
+					// sceneOrtho.children.forEach(function (child) {
+					//     if (child.isSprite){
+					//     	console.log('sprite child',	child)
+					//     	sceneOrtho.remove(child);
+					//     } 
+
+					// });
+					for (var i = sceneOrtho.children.length - 1; i >= 0; i--) {
+						if(sceneOrtho.children[i].isSprite){
+							sceneOrtho.remove(sceneOrtho.children[i]);
+						}
+					}
+					initOrthoContent(sceneOrtho)
+					this.sceneOrthUpdate=true;
+
+				};
+				this.viewer=null,
+				this.隐藏截图窗=function(){
+					var id="shotdiv";
+					var div=d3.select("#"+id)
+					if(div){
+						div.remove()
+					}
+				};
+
+				this.开启录制=function(){
+					this.gif_start=true;
+					this.gif_end=false;
+					console.log('开启录制',renderer.domElement);
+					var option=
+						{	
+							'gifWidth': controls.宽度,
+							'gifHeight': controls.高度,
+							'numFrames': controls.帧数,
+							'frameDuration': controls.帧间隔,
+							'text': controls.文字,
+							'sampleInterval': controls.质量,
+							'numWorkers': controls.转换数,
+						};
+					switch(controls.来源){
+						case '视频':
+							option.video=[];
+							break;
+						case '图片':
+							option.images=[];
+							break;
+					}
+
+					gifshot.createGIF(
+						option,
+
+						 function(obj) {
+							if(!obj.error) {
+								var image = obj.image;
+								// var data=obj.savedRenderingContexts;
+								console.log('gif iamge',image)
+								let animatedImage=document.getElementById('myimage');
+								//console.log(data.length)
+								animatedImage.style.display="block";
+								//animatedImage = document.createElement('img');
+								animatedImage.src = image;
+								//document.body.appendChild(animatedImage);
+							}
+						})
+						// });
+					
+
+					// var gif = new GIF({
+					// 	workers: 2,
+					// 	quality: 10
+					// });
+					// renderer.render( scene, camera );
+					// renderer.render( sceneOrtho, cameraOrtho );
+					// let canvasElement=renderer.domElement
+					// gif.addFrame(canvasElement, {delay: 200});
+					// 	let liElement = document.createElement("li");
+					// 	let imageElement = new Image();
+					// 	let image=images.appendChild(liElement).appendChild(imageElement);
+					// 	let _container=document.getElementById('imageViewer');
+					// 	// let id=document.body.appendChild(image)
+					// 	image.src = imgData;
+
+					// 	console.log(images)
+					// 	// that.viewer=new Viewer(images);
+					// 	that.viewer = new Viewer(images, {
+					// 		backdrop:false,
+					// 		fullscreen:false,
+					// 		inline: false,
+					// 		interval:2000,
+					// 		zIndex:100,
+					// 		container:_container,
+					// 		ready(){
+					// 			that.viewer.zoomTo(0.5);
+					// 			// that.viewer.scale(0.5,0.5)
+					// 		},
+					// 		viewed() {
+					// 			// that.viewer.zoomTo(0.5);
+
+					// 		},
+					// 	});
+					// 	// that.viewer.scale(0.5,0.5);
+					// 	// that.viewer.moveTo(0,0);
+					// 	// that.viewer.update()
+					// });
+
+				}
+				this.停止录制=function(){
+					console.log('gif end');
+
+				// 	gif.on('finished', function(blob) {
+				// 		console.log('finished')
+				// 		window.open(URL.createObjectURL(blob));
+				// 	// document.getElementById("myimage").src=URL.createObjectURL(blob);
+				// 	});
+					this.gif_start=false;
+					this.gif_end=true;
+					this.canvasBuffer=[];
+				// 	if(this.gif_end){
+				// 		console.log('render()')
+				// 		gif.render()
+				// 	}
+
+				}
+			};
+
+			var gui = new dat.GUI();
+			var devcontrolGui=gui.addFolder('设备控制');
+				devcontrolGui.add(controls, '风机启');
+				devcontrolGui.add(controls, '风机关');
+				devcontrolGui.add(controls,'湿帘启');
+				devcontrolGui.add(controls,'湿帘关');
+	 		var childGui=gui.addFolder("温室外形");
+		        childGui.add(controls,"opacity",0,1).onChange(function(e){
+		            material.opacity=e;
+		        });
+		        //注意，当opacity设置的值不为1时，以opacity为主
+		        childGui.add(controls,"transparent").onChange(function(e){
+		            material.transparent=e;
+		        });
+		        childGui.add(controls,"wireframe").onChange(function(e){
+		            material.wireframe=e;
+		        });
+		        //如果visible的值为false，即不可见，不管opacity的值为多少，物体都是不可见的
+		        childGui.add(controls,"visible").onChange(function(e){
+		            material.visible=e;
+		        });
+		        //addColor注意，增加颜色的图形控制，需要使用addColor方法
+		        childGui.addColor(controls,"color").onChange(function(e){
+		            
+		            material.color.setStyle(e);
+		        });
+			// var cameraGUI=gui.addFolder('相机');
+			// 	cameraGUI.add(controls,'fov');
+			// 	cameraGUI.add(controls,'near');
+			// 	cameraGUI.add(controls,'far');
+			// 	cameraGUI.add(controls,'aspect');
+			var showGUI=gui.addFolder('显示');
+				showGUI.add(controls,'自选转速度',[0,1,2,3,4]).onChange(function(e){
+					autoRotateSpeed=e;
+					initOrbitControl(camera);
+					// console.log(autoRotateSpeed)
+					
+				})
+				showGUI.add(controls,'自动旋').onChange(function(e){
+					autoRotate=e;
+				});
+				// showGUI.add(controls,'可拖拽').onChange(function(e){
+				// 	dragable=e;
+				// })
+			var dataGui=gui.addFolder('数据');
+				dataGui.add(controls,'显示大小',80,300).onChange(function(e){
+					controls.dataGuiSize=controls.显示大小;
+					controls.redraw()
+				});
+			var shotGui=gui.addFolder('截屏');
+				shotGui.add(controls,'截屏1');
+				shotGui.add(controls,'截屏2');
+				shotGui.add(controls,'隐藏截图窗');
+			var gifGui=gui.addFolder('gif动画');
+				gifGui.add(controls,'来源',['网络摄像头','视频','图片']);
+				gifGui.add(controls,'宽度',30,500);
+				gifGui.add(controls,'高度',30,500);
+				gifGui.add(controls,'帧数',5,50);
+				gifGui.add(controls,'帧间隔',0,10);
+				gifGui.add(controls,'文字');
+				// gifGui.add(controls,'文字颜色');
+				gifGui.add(controls,'质量',5,20);
+				gifGui.add(controls,'转换数',1,10);
+				gifGui.add(controls,'开启录制');
+				gifGui.add(controls,'停止录制');
+				
+				// shotGui.add(controls,'停止录制')
+			// var chartGui=gui.addFolder('图表');
+			// 	chartGui.add(controls,'chartTransparent').onChange(function(e){
+			// 		this.chartTransparent=false;
+			// 	})
+			// 	chartGui.add(controls,'chartcolor').onChange(function(e){
+			// 		this.chartcolor=e;
+			// 	})
+			init();
+			animate();
+
+			function init() {
+				initScence();
+				initCamera();
+				initLight();
+				initRender();
+				initstate();
+				// inithelp(scene);
+				initwall(scene);
+				initGroud(scene);
+				initSky(scene);
+				initfan(scene);
+				initLargeGroud(scene);
+				initOrthoContent(sceneOrtho);
+				initOrbitControl(camera);
+				initContent(scene);
+				initRain();
+				window.addEventListener( 'resize', onWindowResize, false );
+				
+				var orthdragObject=[];
+				sceneOrtho.children.forEach(function(child){
+					if(child.isSprite){
+						// console.log('!!!sprite',child)
+						orthdragObject.push(child);
+					}
+				})
+				// scene.traverse( function ( object ) {
+				// 	if ( object.isMesh === true ) {
+				// 		console.log(object)
+				// 		transformControls.attach(object);
+				// 	}
+				// } );
+				choosedObject=null;
+				var raycaster = new THREE.Raycaster();
+				var mouse = new THREE.Vector2();
+				// document.addEventListener( 'dblclick', function(event){
+				renderer.domElement.addEventListener( 'dblclick', function(event){
+					if(!rendererFullScreen){
+						rendererWidth=rendererMaxWidth;
+						rendererHeight=rendereMaxHeight;
+						rendererFullScreen=true;
+					    
+					}else{
+						rendererWidth=rendererMinWidth;
+						rendererHeight=rendereMinHeight;
+						rendererFullScreen=false;
+					}
+					onWindowResize();
+				})
+			 //    document.addEventListener( 'mousedown', function(event){
+				// 	console.log('mousedown')
+			 //        //通过鼠标点击的位置计算出raycaster所需要的点的位置，以屏幕中心为原点，值的范围为-1到1.
+
+			 //        mouse.x = ( event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+			 //        mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+
+			 //        // 通过鼠标点的位置和当前相机的矩阵计算出raycaster
+			 //        raycaster.setFromCamera( mouse, cameraOrtho );
+			 //        // raycaster.setFromCamera(mouse,camera);
+			 //        // 获取raycaster直线和所有模型相交的数组集合
+			 //        var intersects = raycaster.intersectObjects( orthdragObject );
+			 //        	if(intersects[0] instanceof Object&& intersects[0].object!='undefined'){
+			        	
+			 //        		choosedObject=intersects[0].object;
+			 //        		// choosedObject.material.color.set( 0xff0000 );
+			 //        		// console.log('choosed object',choosedObject)
+
+			 //        	}
+			        	
+			    
+			       
+
+			 //        //将所有的相交的模型的颜色设置为红色，如果只需要将第一个触发事件，那就数组的第一个模型改变颜色即可
+			 //        // for ( var i = 0; i < intersects.length; i++ ) {
+
+			 //        //     intersects[ i ].object.material.color.set( 0xff0000 );
+
+			 //        // }
+
+				// } );
+				document.addEventListener('mousemove',function(event){
+					var point=convertTo3DCoordinate(event.clientX,event.clientY)
+					if(choosedObject!=null&&choosedObject.position!='undefined'){
+						// console.log('*********!',choosedObject)
+						choosedObject.position.copy(point);
+						// console.log('choose move ',choosedObject)
+
+					}
+				});
+				// document.addEventListener('mouseup',function(event){
+				// 	console.log('sdsdsdsds%%%%',choosedObject);	
+				// 	var point=convertTo3DCoordinate(event.clientX,event.clientY)
+				// 	// console.log(point.x)
+				// 	// console.log('mouseup....',point)
+				// 	if(choosedObject!=null&&choosedObject.position!='undefined'){
+					
+				// 		// console.log('*********!',choosedObject)
+				// 		//sceneOrtho.remove(choosedObject)
+						
+				// 		choosedObject.position.set(point);
+					
+				// 		// console.log('mouseup object',choosedObject.clone())
+				// 		// sceneOrtho.remove(choosedObject);
+				// 		// sceneOrtho.add(choosedObject.clone());
+				// 		render();
+				// 		choosedObject=null;
+				// 	}
+				// });
+				function convertTo3DCoordinate(clientX,clientY){
+					// console.log("cx: " + clientX + ", cy: " + clientY);
+					var mv = new THREE.Vector3(
+					    (clientX / window.innerWidth) * 2 - 1,
+					    -(clientY / window.innerHeight) * 2 + 1,
+					    0.5 );
+					// onsole.log("mx: " + mv.x + ", my: " + mv.y+", mz:"+mv.z);
+					mv.unproject(this.cameraOrtho);
+					//console.log("x: " + mv.x + ", y: " + mv.y+", z:"+mv.z);
+					return mv;
+				}
+			}
+			function initD3Chart(){
+				var datas=[[1,5,3,3,6],[2,2,2,2,2],[5,5,2,2,3],[1,5,3,3,6],[2,2,2,2,2],[5,5,2,2,3]];
+				var xTag=['aaaaaa','bbbbb','eeeeeee','sssss','ddddd']
+				var yTag=[1,2,3,4,5,6];
+				var headtip="#"
+				// var d3chart_width=document.getElementById("barchart").offsetWidth;
+				// var d3chart_height=document.getElementById("barchart").offsetHeight;
+				var d3chart_width=document.getElementById("barchart").offsetWidth;
+				var d3chart_height=400;
+				console.log(d3chart_width,d3chart_height)
+				var d3chart=new d3ColumnChart({element:"#barchart",xTag:xTag,series:datas,width:d3chart_width,height:d3chart_height});
+				console.log("d3chart",d3chart)
+				var d3chartsvg=d3chart.svg;
+				var d3chartcanvas=svg2Canvas(d3chartsvg);
+			    d3chartPlane=createChartPlane(null,d3chartcanvas,15,10)
+			    //create table
+			    var table=d3.select("#barchart_table").append("table")
+			    			.attr("class","pure-table pure-table-bordered");
+			    var table_header=table.append("thead").append("tr")
+			    					.selectAll("th").data(function(){xTag.unshift(headtip);return xTag}).enter().append("th")
+			    					.text(function(d,i){return d});
+			    var table_body=table.append("tbody").selectAll("tr").data(datas).enter().append("tr")
+			    					.classed("pure-table-odd",function(d,i){return i%2==0?true:false})
+			    					.selectAll("td").data(function(d,i){d.unshift(yTag[i]);return d}).enter().append("td")
+			    					.text(function(d,i){return d})
+			    console.log("table",table)
+			    console.log("table-header",table_header)
+			    console.log("table_body",table_body)
+			    var tag=["zsbh","qfdw","qymc","qyxxm","bzrq","cpmc","pzcl","zxh","zsyxjzrq"];
+			    var tag_note=["证书编号","签发单位","企业名称","企业信息码","颁证日期","产品名称","批准产量(吨)","总序号","证书有效截至日期"]
+			    d3.json("/three.js/3d/assets/datas/food/t_cd_snw_lsspzsgkxx_1.json").then(function(data){
+			    	var dataArr=[];
+			    	for(i=0;i<data.length;i++){
+			    		var _data=[];
+			    		for(j=0;j<tag.length;j++){
+			    			_data[j]=isNAN(data[i][tag[j]])
+			    		}
+			    		dataArr.push(_data)
+			    		console.log(_data)
+			    	}
+			    	console.log(dataArr)
+			    	function isNAN(e){
+			    		return e==="undefined"?"null":e
+			    	}
+			    	console.log(dataArr.length);
+			    	var ytag=d3.range(1,dataArr.length+1);
+					var food_table=d3.select("#food_chart").append("table")
+								.attr("class","pure-table pure-table-bordered");
+					var food_table_header=food_table.append("thead").append("tr")
+										.selectAll("th").data(function(){tag_note.unshift(headtip);return tag_note}).enter().append("th")
+										.text(function(d,i){return d});
+					var food_table_body=food_table.append("tbody").selectAll("tr").data(dataArr).enter().append("tr")
+										.classed("pure-table-odd",function(d,i){return i%2==0?true:false})
+										.selectAll("td").data(function(d,i){d.unshift(ytag[i]);return d}).enter().append("td")
+										.text(function(d,i){return d})
+			   
+			    })
+			   
+	
+
+
+			    // }
+				// var columnChart=d3SimpleColumnChart();
+				// var columnCanvas=svg2Canvas(columnChart);
+				// svgColumnChart=createChartPlane(null,columnCanvas,15,10)
+				// 	// console.log('%%%%',columnCanvas);
+				// var lineChart=d3SimpleLineChart();
+				// var lineChartCanvas=svg2Canvas(lineChart);
+				// svgLineChart=createChartPlane(null,lineChartCanvas,15,10)
+
+				// pieChart=new d3SimplePieChart();
+				// var pieChartCanvas=svg2Canvas(pieChart.svg);
+			 //    svgPieChart=createChartPlane(null,pieChartCanvas,15,10)
+				
+			}
+			function initScence(){
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
+				scene.fog = new THREE.Fog( scene.background, 1, 5000 );
+				sceneOrtho = new THREE.Scene();
+			}
+			function inithelp(scene) {
+				var axesHelper = new THREE.AxesHelper(20);//每个轴的长度
+				scene.add(axesHelper);
+			}
+			function initCamera(){
+				//camera scene light render stete
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 2000 );
+				cameraOrtho = new THREE.OrthographicCamera(0, window.innerWidth, window.innerHeight, 0, -10, 10);
+				// canvasCamera= new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 2000 );
+				//camera = new THREE.PerspectiveCamera(controls.fov,controls.spect, controls.near, controls.far);
+				// camera.position.y = 400;
+				camera.position.set(-30, 12, 30);
+				camera.lookAt( scene.position );
+				camera.up.y=1
+				scene.add(camera);
+				sceneOrtho.add(cameraOrtho);
+			}
+			function initLight() {
+				// LIGHTS
+				hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+				hemiLight.color.setHSL( 0.6, 1, 0.6 );
+				hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+				hemiLight.position.set( 0, 50, 0 );
+				scene.add( hemiLight );
+
+				// hemiLightHelper = new THREE.HemisphereLightHelper( hemiLight, 10 );
+				// scene.add( hemiLightHelper );
+
+				dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+				dirLight.color.setHSL( 0.1, 1, 0.95 );
+				dirLight.position.set( - 1, 1.75, 1 );
+				dirLight.position.multiplyScalar( 30 );
+				scene.add( dirLight );
+
+				dirLight.castShadow = true;
+
+				dirLight.shadow.mapSize.width = 2048;
+				dirLight.shadow.mapSize.height = 2048;
+
+				var d = 50;
+
+				dirLight.shadow.camera.left = - d;
+				dirLight.shadow.camera.right = d;
+				dirLight.shadow.camera.top = d;
+				dirLight.shadow.camera.bottom = - d;
+
+				dirLight.shadow.camera.far = 3500;
+				dirLight.shadow.bias = - 0.0001;
+
+				// dirLightHeper = new THREE.DirectionalLightHelper( dirLight, 10 );
+				// scene.add( dirLightHeper );
+
+			}
+			function initstate(){
+				stats = new Stats();
+				document.body.appendChild( stats.dom );
+			}
+
+			function initRender(argument) {
+				renderer = new THREE.WebGLRenderer( { antialias: true,preserveDrawingBuffer: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( rendererWidth,rendererHeight );
+				//renderer.setClearColor(new THREE.Color(0xffffff)); 
+				// renderer.setClearColor(0x4584b4);
+				// renderer.gammaInput = true;
+				// renderer.gammaOutput = true;
+				//告诉渲染器需要阴影效果
+				renderer.shadowMap.enabled = true;
+				// 默认的是，没有设置的这个清晰 THREE.PCFShadowMap
+				renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+				document.getElementById("canvas3d").appendChild(renderer.domElement)
+				// document.body.appendChild( renderer.domElement );
+			}
+			function initOrbitControl(camera){
+				myOrbitControls = new THREE.OrbitControls( camera, renderer.domElement ); 
+				// 如果使用animate方法时，将此函数删除 
+				//myoOrbitControls.addEventListener( 'change', render ); 
+				// 使动画循环使用时阻尼或自转 意思是否有惯性 
+				myOrbitControls.enableDamping = true; 
+				//动态阻尼系数 就是鼠标拖拽旋转灵敏度 
+				//myoOrbitControls.dampingFactor = 0.25; 
+				//是否可以缩放 
+				myOrbitControls.enableZoom = true; 
+				//是否自动旋转 
+				myOrbitControls.autoRotate =true; 
+				myOrbitControls.autoRotateSpeed =autoRotateSpeed;
+				//设置相机距离原点的最远距离 
+				myOrbitControls.minDistance = 120; 
+				//设置相机距离原点的最远距离 
+				myOrbitControls.maxDistance = 2000; 
+				//是否开启右键拖拽 
+				myOrbitControls.enablePan = true; 
+				//最大仰视角和俯视角
+				myOrbitControls.minPolarAngle = 0; // radians
+				myOrbitControls.maxPolarAngle = 1.6; // radians
+			}
+			function initwall(scene){
+				var wallMaterial=new THREE.MeshLambertMaterial( { color:0xFFFFFF} );;
+				var wallLength=70;
+				var wallWidth=50;
+				var wallHight=25;
+				var wallHickness=2;
+				var wallLeft = createWall(wallLength, wallHight, wallHickness);
+				var wallRight= createWall(wallLength, wallHight, wallHickness);
+				var wallTop = createWall(wallHickness,wallHight , wallWidth-2);
+				var wallBottom = createWall(wallHickness,wallHight,wallWidth-2);
+				    wallLeft.position.set(15, 1, -25);
+				    wallRight.position.set(15, 1, 25);
+				    wallTop.position.set(-19, 1, 0);
+				    wallBottom.position.set(49, 1, 0);
+					//接受阴影
+					// ground.receiveShadow = true;
+				//topdoor
+				var topdoorhole=createHole(wallHickness,wallHight*2/3,wallWidth/5);
+					topdoorhole.position.set(-19, 2, 0);
+				var fanholeSize=[6,6,4]
+				var fanhole=createHole(...fanholeSize);
+				var fanhole1=createHole(...fanholeSize);
+				var fanhole2=createHole(...fanholeSize);
+				var fanhole3=createHole(...fanholeSize);
+					fanhole.position.set(-10,-3,-24);
+					fanhole1.position.set(6,-3,-24);
+					fanhole2.position.set(21,-3,-24);
+					fanhole3.position.set(40,-3,-24);
+
+				var wallLeftMesh=merger(wallLeft,fanhole,'subtract');
+					wallLeftMesh1=merger(wallLeftMesh,fanhole1,'subtract');
+					wallLeftMesh2=merger(wallLeftMesh1,fanhole2,'subtract');
+					wallLeftMesh3=merger(wallLeftMesh2,fanhole3,'subtract')
+					// wallLeftMesh3.material=wallMaterial;
+				var resultMesh=merger(wallTop,topdoorhole,'subtract');
+				var partitionwal_1=createWall(wallHickness/10,wallHight,wallWidth*2/3);
+				var partitionwal_2=createWall(wallHickness/10,wallHight,wallWidth*2/3);
+				var partitionwal_3=createWall(wallHickness/10,wallHight,wallWidth*2/3);
+					partitionwal_1.position.set(-1, 1, -7.4);
+					partitionwal_2.position.set(14, 1, -7.4);
+					partitionwal_3.position.set(30, 1, -7.4);
+				wallLeftMesh3.material=material;
+				resultMesh.material=material;
+				wallRight.material=material;
+				wallBottom.material=material;
+				partitionwal_1.material=material;
+				partitionwal_2.material=material;
+				partitionwal_3.material=material;
+
+				// scene.add(wallLeft);
+				scene.add(wallLeftMesh3)
+				scene.add(wallRight);
+				scene.add(resultMesh);
+				scene.add(wallBottom);
+				scene.add(partitionwal_1);
+				scene.add(partitionwal_2);
+				scene.add(partitionwal_3);
+				function createWall(length,width,high,material) {
+					var wall=new THREE.CubeGeometry(length,width,high)
+				    var wallMaterial =material|| new THREE.MeshPhongMaterial({
+				        // color: 0xa0522d
+				        color: 0xffffff
+				    });
+				    var wallMesh = new THREE.Mesh(wall, wallMaterial);
+						// wallMesh.castShadow = true;
+						wallMesh.receiveShadow = true;
+				    return wallMesh
+
+				}
+			}
+			function initfan(scene){
+				var fan=new Fan(scene,6,6,1);
+				var fan1=new Fan(scene,6,6,1);
+				var	fan2=new Fan(scene,6,6,1);
+				var	fan3=new Fan(scene,6,6,1);
+				fan.setPosition(-10,-3,-24);
+				fan1.setPosition(6,-3,-24);
+				fan2.setPosition(21,-3,-24);
+				fan3.setPosition(40,-3,-24);
+				fan.name='fan'
+				fan1.name='fan1'
+				fan2.name='fan2'
+				fan3.name='fan3'
+			}
+			function initGroud(scene){
+				//plane
+				var ground=createGroundPlane(scene,70,50);
+				ground.rotation.x = -0.5 * Math.PI;
+				ground.position.x = 15;
+				ground.position.y = -10;
+				ground.position.z = 0;			
+			}	
+			function initLargeGroud(scene){
+			//groud
+				var bigGround=creatTexturPlane(scene,"./assets/textures/ground/grasslight-big.jpg",10000,10000);
+				bigGround.rotation.x = - Math.PI / 2;
+				bigGround.position.y = -11; 
+
+			}
+			 function initSky(scene) {
+			// SKYDOME
+				var vertexShader = document.getElementById( 'vertexShader' ).textContent;
+				var fragmentShader = document.getElementById( 'fragmentShader' ).textContent;
+				var uniforms = {
+					topColor: { value: new THREE.Color( 0x0077ff ) },
+					bottomColor: { value: new THREE.Color( 0xffffff ) },
+					offset: { value: 33 },
+					exponent: { value: 0.6 }
+				};
+				uniforms.topColor.value.copy( hemiLight.color );
+
+				scene.fog.color.copy( uniforms.bottomColor.value );
+
+				var skyGeo = new THREE.SphereBufferGeometry( 700, 60, 20 );
+				var skyMat = new THREE.ShaderMaterial( { vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
+
+				var sky = new THREE.Mesh( skyGeo, skyMat );
+				scene.add( sky );
+			 }
+			 function initOrthoContent(scene) {
+			 	var scalszie=controls.dataGuiSize;
+		 		var textPlan_1=makeTextSprite(scene,['区域1:','温度：6 ℃','二氧化碳：446 ppm','光照：20000lux','ph：7.1','水温：4 ℃','水位：0.4 m'],{
+	 					borderColor: {r:0, g:255, b:0, a:1},/* 边框黑色 */ 
+		 				backgroundColor: {r:255, g:100, b:100, a:0.1},//背景颜色
+		 			});
+		 			textPlan_1.scale.set(scalszie,scalszie,scalszie);
+					textPlan_1.position.set(window.innerWidth*4/5, window.innerHeight*4/5, -9);
+		 		var textPlan_2=makeTextSprite(scene,['区域2:','温度：6 ℃','二氧化碳：446 ppm','光照：20000lux','ph：7.1','水温：4 ℃','水位：0.4 m'],{
+	 					borderColor: {r:0, g:255, b:0, a:1},/* 边框黑色 */ 
+		 				backgroundColor: {r:255, g:100, b:100, a:0.1},//背景颜色
+		 			});
+		 			textPlan_2.scale.set(scalszie,scalszie,scalszie);
+					textPlan_2.position.set(window.innerWidth*3/5, window.innerHeight*4/5, -9);
+		 		var textPlan_3=makeTextSprite(scene,['区域3:','温度：6 ℃','二氧化碳：446 ppm','光照：20000lux','ph：7.1','水温：4 ℃','水位：0.4 m'],{
+	 					borderColor: {r:0, g:255, b:0, a:1},/* 边框黑色 */ 
+		 				backgroundColor: {r:255, g:100, b:100, a:0.1},//背景颜色
+		 			});
+		 			textPlan_3.scale.set(scalszie,scalszie,scalszie);
+					textPlan_3.position.set(window.innerWidth*2/5, window.innerHeight*4/5, -9);
+		 		var textPlan_4=makeTextSprite(scene,['区域4:','温度：6 ℃','二氧化碳：446 ppm','光照：20000lux','ph：7.1','水温：4 ℃','水位：0.4 m'],{
+	 					borderColor: {r:0, g:255, b:0, a:1},/* 边框黑色 */ 
+		 				backgroundColor: {r:255, g:100, b:100, a:0.1},//背景颜色
+		 			});
+		 			textPlan_4.scale.set(scalszie,scalszie,scalszie);
+					textPlan_4.position.set(window.innerWidth*1/5, window.innerHeight*4/5, -9);
+		 		var textTitel=makeTextSprite(scene,['温室大棚'],{
+	 					borderColor: {r:0, g:255, b:0, a:0},/* 边框黑色 */ 
+		 				backgroundColor: {r:255, g:100, b:100, a:0},//背景颜色
+		 				fontsize:40
+		 			});
+		 			textTitel.scale.set(scalszie,scalszie,scalszie);
+					textTitel.position.set(window.innerWidth*2.5/5, window.innerHeight*4.4/5, -9);
+			 } 
+			function initContent(scene){
+				var video_1=addVideo(scene,'video',15,10);
+				video_1.position.set(-1, 1, -7.4);
+				video_1.rotation.y= Math.PI / 2;
+				initChart()
+				initD3Chart()
+				getCameraStream(
+					function (streamURL) {
+						var camera=document.getElementById('camera');
+							camera.src=streamURL;
+						var cameraVideo=addVideo(null,'camera',15,10);
+						// var planeGroup=creatPlaneGroup(scene,[chart,video_1,svgColumnChart,svgLineChart,svgPieChart,d3chartPlane],2,2,60,40)
+						var planeGroup=creatPlaneGroup(scene,[chart,video_1,d3chartPlane],2,2,60,40)
+						planeGroup.position.set(-1, 50, -70);
+						// camera.play(); 
+					//console.log(cameraVideo)
+					},function(error){
+						console.log(error)
+						// var planeGroup=creatPlaneGroup(scene,[chart,video_1,svgColumnChart,svgLineChart,svgPieChart,d3chartPlane],2,3,40,40)
+						var planeGroup=creatPlaneGroup(scene,[chart,video_1,d3chartPlane],2,2,60,40)
+						planeGroup.position.set(-1, 50, -70);
+					}
+				);
+		
+
+
+
+				//3d文字
+				// var loader = new THREE.FontLoader();
+				// loader.load('./assets/fonts/MicrosoftYaHei_Regular.json', function (response) {
+				// // 文字配置
+				// 	var fontCfg = {
+				// 	    font : response,
+				// 	    weight:'normal',
+				// 	    size : 40,
+				// 	    height: 0.1,
+				// 	    curveSegments: 12,
+				// 	    bevelEnabled: true,
+				// 	    bevelThickness: 10,
+				// 	    bevelSize: 8,
+				// 	    bevelSegments: 5
+				// 	};
+				// 	// TextGeometry文本几何对象
+				// 	var fontGeometry = new THREE.TextGeometry('大 棚',fontCfg);
+				// 	// fontGeometry.computeBoundingBox();//绑定盒子模型
+				// 	// 文字的材质
+				// 	var fontMaterial = new THREE.MeshNormalMaterial();
+				// 	var font = new THREE.Mesh(fontGeometry, fontMaterial);
+				// 	// 计算出整个模型宽度的一半, 不然模型就会绕着x = 0,中心旋转
+				// 	// font.position.x = -(fontGeometry.boundingBox.max.x - fontGeometry.boundingBox.min.x) / 2;
+				// 	// font.position.y=300
+				// 	scene.add(font);
+
+				// })
+			 // 	var scalszie=30;
+				// var textPlan_1=makeTextSprite(scene,['温室大棚1'],{
+				// 		borderColor: {r:0, g:255, b:0, a:1},/* 边框黑色 */ 
+				// 		backgroundColor: {r:255, g:100, b:100, a:0.3},//背景颜色
+				// 	});
+				// 	textPlan_1.scale.set(scalszie,scalszie,scalszie);
+				// 	textPlan_1.position.set(80, 10, -50 );
+			}
+			function initChart(){
+				var  option =
+					{
+						legend: {
+							data:['sin','cos']
+						},
+						toolbox: {
+							show : true,
+							feature : {
+							    mark : {show: true},
+							    dataZoom : {show: true},
+							    dataView : {show: true, readOnly: false},
+							    restore : {show: true},
+							    saveAsImage : {show: true}
+							}
+						},
+						xAxis : [
+							{
+							    type : 'value',
+							    scale:true
+							}
+						],
+						yAxis : [
+							{
+							    type : 'value',
+							    scale:true
+							}
+						],
+						series : [
+							{
+							    name:'sin',
+							    type:'scatter',
+							    large: true,
+							    symbolSize: 3,
+							    data: (function () {
+							        var d = [];
+							        var len = 10000;
+							        var x = 0;
+							        while (len--) {
+							            x = (Math.random() * 10).toFixed(3) - 0;
+							            d.push([
+							                x,
+							                //Math.random() * 10
+							                (Math.sin(x) - x * (len % 2 ? 0.1 : -0.1) * Math.random()).toFixed(3) - 0
+							            ]);
+							        }
+							        //console.log(d)
+							        return d;
+							    })()
+							},
+							{
+							    name:'cos',
+							    type:'scatter',
+							    large: true,
+							    symbolSize: 3,
+							    data: (function () {
+							        var d = [];
+							        var len = 10000;
+							        var x = 0;
+							        while (len--) {
+							            x = (Math.random() * 10).toFixed(3) - 0;
+							            d.push([
+							                x,
+							                //Math.random() * 10
+							                (Math.cos(x) - x * (len % 2 ? 0.1 : -0.1) * Math.random()).toFixed(3) - 0
+							            ]);
+							        }
+							        //console.log(d)
+							        return d;
+							    })()
+							}
+						],
+	
+					};
+			
+				chart=createEchartsPlane(scene,'mycanvas',option,15,10);
+				chart.rotation.y= Math.PI / 2;
+				chart.position.set(15, 1, -7.4);
+			}
+			function initRain(){
+				var texture = new THREE.TextureLoader().load("./assets/textures/particles/raindrop-1.png");
+				raindrop=createParticles(scene,texture,5,true,0.3,0x000000,true,0xffffff)
+				raindrop.scale.set(0.22,0.11,0.01);
+				raindrop.position.set(15, -2, 25);
+				var coolingPaper=creatTexturPlane(scene,"./assets/textures/particles/Coolingpaper.png",100,30,3);
+				coolingPaper.scale.set(0.6,0.5,0.5);
+				coolingPaper.position.set(15, 0, 25);
+				
+			}
+			function onWindowResize() {
+				
+				rendererMinWidth=document.getElementById("canvas3d").offsetWidth;
+			    rendereMinHeight=document.getElementById("canvas3d").offsetHeight;
+			    console.log('resize');
+				console.log('width',rendererWidth,rendererHeight)
+				// camera.aspect = window.innerWidth / window.innerHeight;
+				// camera.updateProjectionMatrix();
+				// cameraOrtho.right = window.innerWidth;
+				// cameraOrtho.top = window.innerHeight;
+				// cameraOrtho.updateProjectionMatrix();
+			    camera.aspect = rendererWidth/rendererHeight;
+				camera.updateProjectionMatrix();
+				cameraOrtho.aspect = rendererWidth/rendererHeight;
+				// cameraOrtho.right = rendererHeight;
+				// cameraOrtho.top = rendererHeight;
+				cameraOrtho.updateProjectionMatrix();
+				renderer.setSize( rendererWidth, rendererHeight );
+				render();
+				// renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+				myOrbitControls.autoRotate=autoRotate;
+				myOrbitControls.update();
+				// dragControls.enabled=dragable;
+				stats.update();
+			}
+         	
+			function render() {
+
+				// var timer = Date.now() * 0.0001;
+				// camera.position.x = Math.cos( timer ) * 800;
+				// camera.position.z = Math.sin( timer ) * 800;
+				// camera.position.set(-30, 40, 30);
+				// camera.lookAt( scene.position );
+				
+				// renderer.domElement.addEventListener('mousewheel', mousewheel, false);
+		    	// window.addEventListener('mousewheel', mousewheel, false);
+				// console.log('scene',scene)
+				      //产生雨滴动画效果
+				// console.log('####',raindrop);
+				if(controls.waterDrop){
+					scene.add(raindrop)
+				    var vertices = raindrop.geometry.vertices;
+				    // console.log('%%%%%%',vertices)
+				    vertices.forEach(function (v) {
+				        v.y = v.y - (v.velocityY)*3;
+				        v.x = v.x - (v.velocityX)*.5;
+
+				        if (v.y <= -60) v.y = 60;
+				        if (v.x <= -20 || v.x >= 20) v.velocityX = v.velocityX * -1;
+				    });
+
+				    //设置实时更新网格的顶点信息
+				    raindrop.geometry.verticesNeedUpdate = true;
+
+				}
+				if(!controls.waterDrop){
+
+						scene.remove(raindrop)
+					
+					
+				}
+				if(controls.isTurnLeft){
+					var fan=scene.getObjectByName('fan')
+					var fan1=scene.getObjectByName('fan1')
+					var fan2=scene.getObjectByName('fan2')
+					var fan3=scene.getObjectByName('fan3')
+						fan.turnLeft(2,2);
+						fan1.turnLeft(2,2);
+						fan2.turnLeft(2,2);
+						fan3.turnLeft(2,2);						
+				}
+
+		
+				// scene.traverse( function ( object ) {
+				// 	if ( object.isMesh === true ) {
+				// 		object.rotation.x = timer * 5;
+				// 		object.rotation.y = timer * 2.5;
+
+				// 	}
+
+				// } );
+				renderer.render( scene, camera );
+				renderer.autoClear = false;
+				if(controls.sceneOrthUpdate){
+					renderer.render(sceneOrtho, cameraOrtho);	
+				}
+
+				// if(controls.gif_start){
+				// 		console.log('addFrame')
+
+				// 		// setTimeout(function(){
+				// 			// renderer.render( scene, camera );
+				// 			let imgData=renderer.domElement.toDataURL("image/jpeg");
+				// 			controls.canvasBuffer.push(imgData);
+				// 			// let img=document.getElementById("myimage");
+				// 			// img.src=imgData;
+				// 			// gif.addFrame(img);
+				// 		// },1000)
+				// 	}
+
+				// renderer.autoClear=false;
+
+				// if(true){
+				// 	if(controls.gif_start){
+				// 		console.log('gif_start');
+				// 		controls.gif_flag=true;
+				// 		// let image=document.getElementById("myimage");
+				// 		let canvasElement=renderer.domElement;
+				// 		// let canvasdata=canvasElement.toDataURL();
+				// 		// shot(renderer,function(DataURL){
+				// 		// 	image.src=DataURL
+				// 		// })	
+				// 		// console.log(canvasElement)
+				// 		// add an image element
+				// 		// gif.addFrame(imageElement);
+				// 		// gif.addFrame(imgData);
+						
+				// 		// or a canvas element
+				// 		gif.addFrame(canvasElement,{delay:30});
+
+				// 	}
+				// 	// or copy the pixels from a canvas context
+				// 	// gif.addFrame(ctx, {copy: true});
+				// 	if(controls.gif_end&&controls.gif_flag){
+				// 		console.log('gif_end',gif);
+				// 		gif.render()
+				// 		controls.gif_flag=false;
+
+				// 	}
+				// }
+				
+			}
+
+		</script>
+
+	</body>
+</html>
